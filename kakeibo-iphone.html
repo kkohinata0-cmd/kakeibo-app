@@ -1,0 +1,1332 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="家計簿">
+  <meta name="theme-color" content="#c7a982">
+  <title>家計簿</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --sand: #c7a982;
+      --sand-dark: #a9875c;
+      --theme-start: #e6a0a5;
+      --theme-end: #eba65f;
+      --theme-soft: #fff0e9;
+      --theme-gradient: linear-gradient(135deg, var(--theme-start), var(--theme-end));
+      --ink: #171717;
+      --muted: #7a7a7a;
+      --line: #d9dde2;
+      --paper: #fffdf9;
+      --panel: #f7f1e8;
+      --danger: #d84b4b;
+      --ok: #2f8f5a;
+      --shadow: 0 10px 28px rgba(31, 25, 16, .14);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+      background: #0b0b0b;
+      color: var(--ink);
+      letter-spacing: 0;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+      color: inherit;
+    }
+
+    button {
+      border: 0;
+      background: transparent;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .app-shell {
+      width: min(100vw, 520px);
+      min-height: 100svh;
+      margin: 0 auto;
+      background: var(--paper);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding: calc(14px + env(safe-area-inset-top, 0px)) 14px 10px;
+      background: var(--theme-gradient);
+      color: #fff;
+      box-shadow: 0 1px 0 rgba(0,0,0,.08);
+    }
+
+    .topline {
+      display: grid;
+      grid-template-columns: 44px 1fr 44px;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      color: currentColor;
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 21px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .period {
+      margin-top: 4px;
+      text-align: center;
+      font-size: 12px;
+      color: rgba(255,255,255,.86);
+    }
+
+    .payment-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+      margin-top: 12px;
+    }
+
+    .payment-tab {
+      min-height: 40px;
+      padding: 8px 6px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.22);
+      color: #fff;
+      font-size: 13px;
+      display: grid;
+      gap: 2px;
+      text-align: center;
+    }
+
+    .payment-tab.active {
+      background: #fff;
+      color: #6f5738;
+      box-shadow: 0 4px 12px rgba(75, 55, 22, .16);
+    }
+
+    .payment-tab strong {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 10px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .summary-card {
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+      box-shadow: 0 1px 0 rgba(0,0,0,.04);
+      min-width: 0;
+    }
+
+    .summary-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 3px;
+    }
+
+    .summary-value {
+      font-size: 20px;
+      font-weight: 750;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .summary-value.minus { color: var(--danger); }
+    .summary-value.plus { color: var(--ok); }
+
+    .budget-row {
+      display: grid;
+      grid-template-columns: 1fr 118px;
+      gap: 8px;
+      padding: 10px;
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .input, .select, .textarea {
+      width: 100%;
+      border: 1px solid #ccd2d7;
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px 11px;
+      min-height: 42px;
+      outline: none;
+    }
+
+    .input:focus, .select:focus, .textarea:focus {
+      border-color: var(--sand-dark);
+      box-shadow: 0 0 0 3px rgba(199,169,130,.22);
+    }
+
+    .small-btn {
+      min-height: 42px;
+      border-radius: 8px;
+      background: var(--sand-dark);
+      color: #fff;
+      font-weight: 700;
+      padding: 0 12px;
+    }
+
+    .main {
+      padding-bottom: calc(78px + var(--safe-bottom));
+    }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    .entry-list {
+      background: #fff;
+    }
+
+    .entry {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      min-height: 62px;
+      border-bottom: 1px solid var(--line);
+      align-items: stretch;
+    }
+
+    .entry-main {
+      display: grid;
+      grid-template-columns: 50px 1fr;
+      gap: 0;
+      min-width: 0;
+      align-items: center;
+      padding: 7px 0 7px 10px;
+    }
+
+    .cat-dot {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.06);
+    }
+
+    .entry-text {
+      min-width: 0;
+    }
+
+    .entry-name {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 20px;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .entry-meta {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .amount-wrap {
+      min-width: 104px;
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      align-items: center;
+      padding-right: 10px;
+      gap: 4px;
+    }
+
+    .plus-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #9cabb5;
+      color: #fff;
+      font-size: 31px;
+      line-height: .8;
+      font-weight: 300;
+    }
+
+    .amount {
+      text-align: right;
+      font-size: 22px;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .empty {
+      padding: 34px 20px;
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: min(100vw, 520px);
+      z-index: 25;
+      padding: 8px 10px calc(8px + var(--safe-bottom));
+      background: var(--theme-gradient);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      color: #fff;
+      box-shadow: 0 -1px 0 rgba(0,0,0,.08);
+    }
+
+    .nav-btn {
+      min-height: 46px;
+      border-radius: 8px;
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .nav-btn.active {
+      background: rgba(255,255,255,.18);
+    }
+
+    .panel-pad {
+      padding: 14px 12px 24px;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 750;
+      margin: 8px 0 10px;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+
+    .check-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      min-height: 42px;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .check-row input {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--sand-dark);
+    }
+
+    .primary-btn, .ghost-btn, .danger-btn {
+      min-height: 46px;
+      border-radius: 8px;
+      padding: 0 14px;
+      font-weight: 750;
+    }
+
+    .primary-btn {
+      background: var(--sand-dark);
+      color: #fff;
+    }
+
+    .ghost-btn {
+      border: 1px solid #c7cdd3;
+      background: #fff;
+      color: #333;
+    }
+
+    .danger-btn {
+      background: #fff1f1;
+      color: var(--danger);
+      border: 1px solid #ffc9c9;
+    }
+
+    .action-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+
+    .report-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .month-total-list {
+      display: grid;
+      gap: 7px;
+      margin-bottom: 18px;
+    }
+
+    .month-total-row {
+      display: grid;
+      grid-template-columns: 82px 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 9px 10px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
+    .month-total-row strong {
+      font-size: 15px;
+    }
+
+    .report-item {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      display: grid;
+      gap: 7px;
+    }
+
+    .report-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      font-size: 15px;
+    }
+
+    .bar {
+      height: 10px;
+      border-radius: 999px;
+      background: #edf0f2;
+      overflow: hidden;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      border-radius: 999px;
+      width: var(--w);
+      background: var(--c);
+    }
+
+    .settings-stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .comparison-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      margin-bottom: 18px;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 390px;
+      font-size: 13px;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--line);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .comparison-table th:first-child,
+    .comparison-table td:first-child {
+      text-align: left;
+      position: sticky;
+      left: 0;
+      background: #fff;
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .comparison-table th {
+      color: var(--muted);
+      font-weight: 650;
+      background: var(--theme-soft);
+    }
+
+    .diff-up { color: var(--danger); }
+    .diff-down { color: var(--ok); }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      display: none;
+      align-items: end;
+      justify-content: center;
+      background: rgba(0,0,0,.36);
+      padding: 16px 10px calc(16px + var(--safe-bottom));
+    }
+
+    .modal.open { display: flex; }
+
+    .sheet {
+      width: min(100%, 500px);
+      max-height: min(86svh, 760px);
+      overflow: auto;
+      background: var(--paper);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .sheet h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+    }
+
+    .hidden-file {
+      position: fixed;
+      left: -9999px;
+      opacity: 0;
+    }
+
+    @media (max-width: 360px) {
+      .entry-name { font-size: 18px; }
+      .amount { font-size: 20px; }
+      .summary-value { font-size: 18px; }
+      .budget-row { grid-template-columns: 1fr 104px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topline">
+        <button class="icon-btn" id="prevMonth" aria-label="前の月">‹</button>
+        <div>
+          <div class="title" id="monthTitle">202606</div>
+          <div class="period" id="periodLabel">5/28 - 6/27</div>
+        </div>
+        <button class="icon-btn" id="nextMonth" aria-label="次の月">›</button>
+      </div>
+      <div class="payment-tabs" id="paymentTabs"></div>
+    </header>
+
+    <main class="main">
+      <section class="view active" data-view="list">
+        <div class="summary">
+          <div class="summary-card">
+            <div class="summary-label">使った/予定</div>
+            <div class="summary-value minus" id="spentValue">-0</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">残り</div>
+            <div class="summary-value plus" id="remainValue">0</div>
+          </div>
+        </div>
+        <div class="budget-row">
+          <label>
+            <span class="field-label">この支払い方法の予算</span>
+            <input class="input" id="budgetInput" inputmode="numeric" placeholder="70000">
+          </label>
+          <button class="small-btn" id="saveBudget">保存</button>
+        </div>
+        <div class="entry-list" id="entryList"></div>
+      </section>
+
+      <section class="view" data-view="add">
+        <div class="panel-pad">
+          <div class="section-title">入力</div>
+          <form class="form-grid" id="entryForm">
+            <div class="two-col">
+              <label>
+                <span class="field-label">日付</span>
+                <input class="input" id="dateInput" type="date" required>
+              </label>
+              <label>
+                <span class="field-label">支払い</span>
+                <select class="select" id="paymentInput"></select>
+              </label>
+            </div>
+            <label>
+              <span class="field-label">カテゴリー</span>
+              <select class="select" id="categoryInput"></select>
+            </label>
+            <label>
+              <span class="field-label">項目</span>
+              <input class="input" id="memoInput" placeholder="例：1a生活消臭">
+            </label>
+            <div class="two-col">
+              <label>
+                <span class="field-label">金額</span>
+                <input class="input" id="amountInput" inputmode="numeric" placeholder="1692" required>
+              </label>
+              <label>
+                <span class="field-label">種類</span>
+                <select class="select" id="typeInput">
+                  <option value="normal">通常の支出</option>
+                  <option value="suica_charge">Suicaチャージ</option>
+                  <option value="suica_use">Suicaで使用</option>
+                </select>
+              </label>
+            </div>
+            <label class="check-row">
+              <input id="plannedInput" type="checkbox">
+              <span>鍵マークの予定として残り予算に入れる</span>
+            </label>
+            <div class="action-row">
+              <button class="primary-btn" type="submit">追加</button>
+              <button class="ghost-btn" type="button" id="clearForm">クリア</button>
+            </div>
+          </form>
+          <p class="note">クレジットのSuicaチャージは支払い予算にだけ反映し、Suicaで使用は月のカテゴリー集計に反映します。</p>
+        </div>
+      </section>
+
+      <section class="view" data-view="report">
+        <div class="panel-pad">
+          <div class="section-title">月別の合計</div>
+          <div class="month-total-list" id="monthTotalList"></div>
+          <div class="section-title">項目別 比較表</div>
+          <div class="comparison-wrap">
+            <table class="comparison-table">
+              <thead>
+                <tr>
+                  <th>項目</th>
+                  <th id="compareCurrentHead">今月</th>
+                  <th id="comparePrevHead">前月</th>
+                  <th>差額</th>
+                </tr>
+              </thead>
+              <tbody id="comparisonBody"></tbody>
+            </table>
+          </div>
+          <div class="section-title">カテゴリー別 月集計</div>
+          <div class="summary" style="padding:0 0 12px;background:transparent;border:0">
+            <div class="summary-card">
+              <div class="summary-label">実績合計</div>
+              <div class="summary-value minus" id="reportTotal">-0</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-label">予定込み</div>
+              <div class="summary-value minus" id="reportTotalWithPlan">-0</div>
+            </div>
+          </div>
+          <div class="report-list" id="reportList"></div>
+        </div>
+      </section>
+
+      <section class="view" data-view="settings">
+        <div class="panel-pad settings-stack">
+          <div>
+            <div class="section-title">バックアップ</div>
+            <div class="action-row">
+              <button class="primary-btn" id="exportCsv">CSV出力</button>
+              <button class="ghost-btn" id="importCsvBtn">CSV読込</button>
+            </div>
+            <input class="hidden-file" id="importCsv" type="file" accept=".csv,text/csv">
+          </div>
+          <div>
+            <div class="section-title">月の扱い</div>
+            <p class="note">毎月28日から翌月27日を1か月として扱います。例：5/28から6/27は「202606」です。</p>
+          </div>
+          <div>
+            <div class="section-title">データ削除</div>
+            <button class="danger-btn" id="clearAll">このHTML内の保存データを削除</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="メニュー">
+      <button class="nav-btn active" data-nav="list" aria-label="一覧">☰</button>
+      <button class="nav-btn" id="quickAdd" aria-label="追加">＋</button>
+      <button class="nav-btn" data-nav="report" aria-label="集計">◕</button>
+      <button class="nav-btn" data-nav="settings" aria-label="設定">⚙</button>
+    </nav>
+  </div>
+
+  <div class="modal" id="editModal">
+    <div class="sheet">
+      <h2>編集</h2>
+      <form class="form-grid" id="editForm">
+        <input type="hidden" id="editId">
+        <div class="two-col">
+          <label>
+            <span class="field-label">日付</span>
+            <input class="input" id="editDate" type="date" required>
+          </label>
+          <label>
+            <span class="field-label">支払い</span>
+            <select class="select" id="editPayment"></select>
+          </label>
+        </div>
+        <label>
+          <span class="field-label">カテゴリー</span>
+          <select class="select" id="editCategory"></select>
+        </label>
+        <label>
+          <span class="field-label">項目</span>
+          <input class="input" id="editMemo">
+        </label>
+        <div class="two-col">
+          <label>
+            <span class="field-label">金額</span>
+            <input class="input" id="editAmount" inputmode="numeric" required>
+          </label>
+          <label>
+            <span class="field-label">種類</span>
+            <select class="select" id="editType">
+              <option value="normal">通常の支出</option>
+              <option value="suica_charge">Suicaチャージ</option>
+              <option value="suica_use">Suicaで使用</option>
+            </select>
+          </label>
+        </div>
+        <label class="check-row">
+          <input id="editPlanned" type="checkbox">
+          <span>予定</span>
+        </label>
+        <div class="action-row">
+          <button class="primary-btn" type="submit">保存</button>
+          <button class="ghost-btn" type="button" id="closeEdit">閉じる</button>
+        </div>
+        <button class="danger-btn" type="button" id="deleteEntry">削除</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "personal-kakeibo-v1";
+    const payments = [
+      { id: "d", label: "d払い" },
+      { id: "credit", label: "クレジット" },
+      { id: "cash", label: "現金" }
+    ];
+    const categories = [
+      { id: "daily", label: "日用品", icon: "🧹", color: "#e9d7bd" },
+      { id: "shopping", label: "買い物", icon: "🛍️", color: "#f7bfd6" },
+      { id: "holiday", label: "休日", icon: "⛰️", color: "#bfe0c4" },
+      { id: "food", label: "食費", icon: "🍽️", color: "#f5be7a" },
+      { id: "hospital", label: "病院", icon: "🩺", color: "#bfe2f0" },
+      { id: "event", label: "イベント", icon: "💐", color: "#f4df78" },
+      { id: "star", label: "★", icon: "⭐", color: "#d5c0ee" }
+    ];
+    const monthlyThemes = [
+      { name: "新春", start: "#b88a55", end: "#c74f62", soft: "#fff3ea" },
+      { name: "梅の香", start: "#b76586", end: "#d9a15f", soft: "#fff0f4" },
+      { name: "桜", start: "#e28ba2", end: "#f0b58b", soft: "#fff1f5" },
+      { name: "花霞", start: "#b6a46a", end: "#df8f8f", soft: "#fff4ed" },
+      { name: "新緑", start: "#5d9274", end: "#d2a858", soft: "#eef8f0" },
+      { name: "紫陽花", start: "#7b78b8", end: "#6fb3b0", soft: "#f0f3ff" },
+      { name: "七夕", start: "#355c9f", end: "#d78f70", soft: "#eef3ff" },
+      { name: "夏祭り", start: "#2f7f91", end: "#e58b4a", soft: "#edf8f7" },
+      { name: "月見", start: "#6f6a9d", end: "#d6a84f", soft: "#f5f1ff" },
+      { name: "金木犀", start: "#9a6a43", end: "#e09a34", soft: "#fff4df" },
+      { name: "紅葉", start: "#8e4f59", end: "#c47a3f", soft: "#fff0e8" },
+      { name: "冬灯り", start: "#365f7c", end: "#b36b83", soft: "#edf5fa" }
+    ];
+
+    let state = loadState();
+    let currentPeriod = periodKeyForDate(new Date());
+    let currentPayment = "d";
+    let currentView = "list";
+
+    const yen = new Intl.NumberFormat("ja-JP");
+    const $ = (id) => document.getElementById(id);
+
+    function loadState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (saved && Array.isArray(saved.entries)) return saved;
+      } catch (error) {}
+      return { entries: [], budgets: {} };
+    }
+
+    function persist() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function pad2(n) {
+      return String(n).padStart(2, "0");
+    }
+
+    function isoDate(date) {
+      return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
+    }
+
+    function periodKeyForDate(date) {
+      const y = date.getFullYear();
+      const m = date.getMonth();
+      const labelDate = date.getDate() >= 28 ? new Date(y, m + 1, 1) : new Date(y, m, 1);
+      return `${labelDate.getFullYear()}${pad2(labelDate.getMonth() + 1)}`;
+    }
+
+    function periodBounds(key) {
+      const y = Number(key.slice(0, 4));
+      const m = Number(key.slice(4, 6)) - 1;
+      return {
+        start: new Date(y, m - 1, 28),
+        end: new Date(y, m, 27)
+      };
+    }
+
+    function addMonthsToKey(key, delta) {
+      const y = Number(key.slice(0, 4));
+      const m = Number(key.slice(4, 6)) - 1;
+      const next = new Date(y, m + delta, 1);
+      return `${next.getFullYear()}${pad2(next.getMonth() + 1)}`;
+    }
+
+    function budgetKey(period, payment) {
+      return `${period}:${payment}`;
+    }
+
+    function getBudget(payment = currentPayment, period = currentPeriod) {
+      return Number(state.budgets[budgetKey(period, payment)] || 0);
+    }
+
+    function parseAmount(value) {
+      return Math.max(0, Number(String(value).replace(/[^\d]/g, "")) || 0);
+    }
+
+    function category(id) {
+      return categories.find((item) => item.id === id) || categories[0];
+    }
+
+    function labelMonth(key) {
+      return `${Number(key.slice(4, 6))}月`;
+    }
+
+    function applyMonthlyTheme() {
+      const month = Number(currentPeriod.slice(4, 6));
+      const theme = monthlyThemes[month - 1];
+      const root = document.documentElement;
+      root.style.setProperty("--theme-start", theme.start);
+      root.style.setProperty("--theme-end", theme.end);
+      root.style.setProperty("--theme-soft", theme.soft);
+      root.style.setProperty("--sand", theme.start);
+      root.style.setProperty("--sand-dark", theme.end);
+      $("periodLabel").dataset.theme = theme.name;
+    }
+
+    function paymentLabel(id) {
+      return payments.find((item) => item.id === id)?.label || id;
+    }
+
+    function typeLabel(type) {
+      if (type === "suica_charge") return "Suicaチャージ";
+      if (type === "suica_use") return "Suica使用";
+      return "通常";
+    }
+
+    function isBudgetImpact(entry) {
+      return entry.type !== "suica_use";
+    }
+
+    function isCategoryImpact(entry) {
+      return entry.type !== "suica_charge";
+    }
+
+    function categoryRowsForPeriod(period) {
+      return entriesForPeriod(period).filter(isCategoryImpact);
+    }
+
+    function actualCategoryRowsForPeriod(period) {
+      return categoryRowsForPeriod(period).filter((entry) => !entry.planned);
+    }
+
+    function actualTotalForPeriod(period) {
+      return actualCategoryRowsForPeriod(period).reduce((sum, entry) => sum + entry.amount, 0);
+    }
+
+    function plannedTotalForPeriod(period) {
+      return categoryRowsForPeriod(period).reduce((sum, entry) => sum + entry.amount, 0);
+    }
+
+    function categoryTotalForPeriod(period, categoryId) {
+      return actualCategoryRowsForPeriod(period)
+        .filter((entry) => entry.category === categoryId)
+        .reduce((sum, entry) => sum + entry.amount, 0);
+    }
+
+    function entriesForPeriod(period = currentPeriod) {
+      return state.entries.filter((entry) => entry.period === period);
+    }
+
+    function currentEntries() {
+      return entriesForPeriod().filter((entry) => entry.payment === currentPayment);
+    }
+
+    function render() {
+      const bounds = periodBounds(currentPeriod);
+      applyMonthlyTheme();
+      $("monthTitle").textContent = currentPeriod;
+      $("periodLabel").textContent = `${monthlyThemes[Number(currentPeriod.slice(4, 6)) - 1].name} / ${bounds.start.getMonth() + 1}/${bounds.start.getDate()} - ${bounds.end.getMonth() + 1}/${bounds.end.getDate()}`;
+      renderPaymentTabs();
+      renderBudget();
+      renderList();
+      renderReport();
+      syncFormDefaults();
+    }
+
+    function renderPaymentTabs() {
+      const container = $("paymentTabs");
+      container.innerHTML = "";
+      payments.forEach((payment) => {
+        const used = entriesForPeriod()
+          .filter((entry) => entry.payment === payment.id && isBudgetImpact(entry))
+          .reduce((sum, entry) => sum + entry.amount, 0);
+        const remain = getBudget(payment.id) - used;
+        const button = document.createElement("button");
+        button.className = `payment-tab${payment.id === currentPayment ? " active" : ""}`;
+        button.innerHTML = `<strong>${payment.label}</strong><span>${yen.format(remain)}円</span>`;
+        button.addEventListener("click", () => {
+          currentPayment = payment.id;
+          currentView = "list";
+          activateView();
+          render();
+        });
+        container.appendChild(button);
+      });
+    }
+
+    function renderBudget() {
+      const used = currentEntries()
+        .filter(isBudgetImpact)
+        .reduce((sum, entry) => sum + entry.amount, 0);
+      const budget = getBudget();
+      const remain = budget - used;
+      $("spentValue").textContent = `-${yen.format(used)}`;
+      $("remainValue").textContent = yen.format(remain);
+      $("remainValue").classList.toggle("minus", remain < 0);
+      $("remainValue").classList.toggle("plus", remain >= 0);
+      $("budgetInput").value = budget || "";
+    }
+
+    function renderList() {
+      const list = $("entryList");
+      const rows = currentEntries().sort((a, b) => a.date.localeCompare(b.date) || a.createdAt - b.createdAt);
+      list.innerHTML = "";
+      if (!rows.length) {
+        list.innerHTML = `<div class="empty">まだ入力がありません。<br>下の「＋」から追加できます。</div>`;
+        return;
+      }
+      rows.forEach((entry) => {
+        const cat = category(entry.category);
+        const row = document.createElement("button");
+        row.className = "entry";
+        row.type = "button";
+        row.innerHTML = `
+          <span class="entry-main">
+            <span class="cat-dot" style="background:${cat.color}">${cat.icon}</span>
+            <span class="entry-text">
+              <span class="entry-name">${entry.planned ? "🔒" : ""}${escapeHtml(entry.memo || cat.label)}</span>
+              <span class="entry-meta">${formatShortDate(entry.date)} / ${cat.label} / ${typeLabel(entry.type)}</span>
+            </span>
+          </span>
+          <span class="amount-wrap">
+            <span class="plus-mark">＋</span>
+            <span class="amount">${entry.type === "suica_use" ? "0" : "-" + yen.format(entry.amount)}</span>
+          </span>
+        `;
+        row.addEventListener("click", () => openEdit(entry.id));
+        list.appendChild(row);
+      });
+    }
+
+    function renderReport() {
+      const rows = categoryRowsForPeriod(currentPeriod);
+      const actualRows = rows.filter((entry) => !entry.planned);
+      const actualTotal = actualTotalForPeriod(currentPeriod);
+      const plannedTotal = plannedTotalForPeriod(currentPeriod);
+      $("reportTotal").textContent = `-${yen.format(actualTotal)}`;
+      $("reportTotalWithPlan").textContent = `-${yen.format(plannedTotal)}`;
+      renderMonthTotals();
+      renderComparisonTable();
+      const max = Math.max(1, ...categories.map((cat) => rows.filter((entry) => entry.category === cat.id && !entry.planned).reduce((sum, entry) => sum + entry.amount, 0)));
+      const list = $("reportList");
+      list.innerHTML = "";
+      categories.forEach((cat) => {
+        const actual = actualRows.filter((entry) => entry.category === cat.id).reduce((sum, entry) => sum + entry.amount, 0);
+        const withPlan = rows.filter((entry) => entry.category === cat.id).reduce((sum, entry) => sum + entry.amount, 0);
+        const item = document.createElement("div");
+        item.className = "report-item";
+        item.innerHTML = `
+          <div class="report-head">
+            <strong>${cat.icon} ${cat.label}</strong>
+            <span>-${yen.format(actual)}</span>
+          </div>
+          <div class="bar"><span style="--w:${Math.round((actual / max) * 100)}%;--c:${cat.color}"></span></div>
+          <div class="note">予定込み：-${yen.format(withPlan)}</div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function renderMonthTotals() {
+      const list = $("monthTotalList");
+      list.innerHTML = "";
+      for (let i = 0; i < 6; i++) {
+        const key = addMonthsToKey(currentPeriod, -i);
+        const actual = actualTotalForPeriod(key);
+        const planned = plannedTotalForPeriod(key);
+        const max = Math.max(actual, planned, 1);
+        const row = document.createElement("div");
+        row.className = "month-total-row";
+        row.innerHTML = `
+          <strong>${labelMonth(key)}</strong>
+          <div class="bar"><span style="--w:${Math.round((actual / max) * 100)}%;--c:var(--theme-end)"></span></div>
+          <span>-${yen.format(actual)}</span>
+        `;
+        row.title = `${key} 予定込み -${yen.format(planned)}`;
+        list.appendChild(row);
+      }
+    }
+
+    function renderComparisonTable() {
+      const prevPeriod = addMonthsToKey(currentPeriod, -1);
+      $("compareCurrentHead").textContent = labelMonth(currentPeriod);
+      $("comparePrevHead").textContent = labelMonth(prevPeriod);
+      const body = $("comparisonBody");
+      body.innerHTML = "";
+      categories.forEach((cat) => {
+        const current = categoryTotalForPeriod(currentPeriod, cat.id);
+        const prev = categoryTotalForPeriod(prevPeriod, cat.id);
+        const diff = current - prev;
+        const row = document.createElement("tr");
+        const diffClass = diff > 0 ? "diff-up" : diff < 0 ? "diff-down" : "";
+        const diffText = diff === 0 ? "0" : `${diff > 0 ? "+" : "-"}${yen.format(Math.abs(diff))}`;
+        row.innerHTML = `
+          <td>${cat.icon} ${cat.label}</td>
+          <td>-${yen.format(current)}</td>
+          <td>-${yen.format(prev)}</td>
+          <td class="${diffClass}">${diffText}</td>
+        `;
+        body.appendChild(row);
+      });
+    }
+
+    function formatShortDate(value) {
+      const date = new Date(`${value}T00:00:00`);
+      return `${date.getMonth() + 1}/${date.getDate()}`;
+    }
+
+    function escapeHtml(text) {
+      return String(text).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function activateView() {
+      document.querySelectorAll(".view").forEach((view) => {
+        view.classList.toggle("active", view.dataset.view === currentView);
+      });
+      document.querySelectorAll(".nav-btn[data-nav]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.nav === currentView);
+      });
+    }
+
+    function fillSelects() {
+      const paymentOptions = payments.map((item) => `<option value="${item.id}">${item.label}</option>`).join("");
+      $("paymentInput").innerHTML = paymentOptions;
+      $("editPayment").innerHTML = paymentOptions;
+      const categoryOptions = categories.map((item) => `<option value="${item.id}">${item.icon} ${item.label}</option>`).join("");
+      $("categoryInput").innerHTML = categoryOptions;
+      $("editCategory").innerHTML = categoryOptions;
+    }
+
+    function syncFormDefaults() {
+      if (!$("dateInput").value) {
+        const bounds = periodBounds(currentPeriod);
+        const today = new Date();
+        $("dateInput").value = periodKeyForDate(today) === currentPeriod ? isoDate(today) : isoDate(bounds.start);
+      }
+      $("paymentInput").value = currentPayment;
+    }
+
+    function addEntry(data) {
+      const date = new Date(`${data.date}T00:00:00`);
+      state.entries.push({
+        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
+        period: periodKeyForDate(date),
+        date: data.date,
+        payment: data.payment,
+        category: data.category,
+        memo: data.memo.trim(),
+        amount: parseAmount(data.amount),
+        type: data.type,
+        planned: Boolean(data.planned),
+        createdAt: Date.now()
+      });
+      persist();
+    }
+
+    function openEdit(id) {
+      const entry = state.entries.find((item) => item.id === id);
+      if (!entry) return;
+      $("editId").value = entry.id;
+      $("editDate").value = entry.date;
+      $("editPayment").value = entry.payment;
+      $("editCategory").value = entry.category;
+      $("editMemo").value = entry.memo;
+      $("editAmount").value = entry.amount;
+      $("editType").value = entry.type;
+      $("editPlanned").checked = entry.planned;
+      $("editModal").classList.add("open");
+    }
+
+    function closeEdit() {
+      $("editModal").classList.remove("open");
+    }
+
+    function exportCsv() {
+      const header = ["period","date","payment","category","memo","amount","type","planned"];
+      const lines = [header.join(",")].concat(state.entries.map((entry) => header.map((key) => csvCell(entry[key])).join(",")));
+      const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `kakeibo-${currentPeriod}.csv`;
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function csvCell(value) {
+      const text = String(value ?? "");
+      return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+    }
+
+    function parseCsv(text) {
+      const rows = [];
+      let row = [];
+      let cell = "";
+      let quote = false;
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const next = text[i + 1];
+        if (quote && char === '"' && next === '"') {
+          cell += '"';
+          i++;
+        } else if (char === '"') {
+          quote = !quote;
+        } else if (!quote && char === ",") {
+          row.push(cell);
+          cell = "";
+        } else if (!quote && (char === "\n" || char === "\r")) {
+          if (char === "\r" && next === "\n") i++;
+          row.push(cell);
+          if (row.some((item) => item !== "")) rows.push(row);
+          row = [];
+          cell = "";
+        } else {
+          cell += char;
+        }
+      }
+      row.push(cell);
+      if (row.some((item) => item !== "")) rows.push(row);
+      return rows;
+    }
+
+    function importCsv(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const rows = parseCsv(String(reader.result || ""));
+        const header = rows.shift() || [];
+        const imported = rows.map((row) => Object.fromEntries(header.map((key, index) => [key, row[index]]))).filter((row) => row.date);
+        imported.forEach((row) => {
+          const date = new Date(`${row.date}T00:00:00`);
+          state.entries.push({
+            id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
+            period: row.period || periodKeyForDate(date),
+            date: row.date,
+            payment: row.payment || "d",
+            category: row.category || "daily",
+            memo: row.memo || "",
+            amount: parseAmount(row.amount),
+            type: row.type || "normal",
+            planned: row.planned === "true",
+            createdAt: Date.now()
+          });
+        });
+        persist();
+        render();
+        alert(`${imported.length}件読み込みました`);
+      };
+      reader.readAsText(file);
+    }
+
+    fillSelects();
+    render();
+
+    $("prevMonth").addEventListener("click", () => {
+      currentPeriod = addMonthsToKey(currentPeriod, -1);
+      $("dateInput").value = "";
+      render();
+    });
+
+    $("nextMonth").addEventListener("click", () => {
+      currentPeriod = addMonthsToKey(currentPeriod, 1);
+      $("dateInput").value = "";
+      render();
+    });
+
+    $("saveBudget").addEventListener("click", () => {
+      state.budgets[budgetKey(currentPeriod, currentPayment)] = parseAmount($("budgetInput").value);
+      persist();
+      render();
+    });
+
+    document.querySelectorAll(".nav-btn[data-nav]").forEach((button) => {
+      button.addEventListener("click", () => {
+        currentView = button.dataset.nav;
+        activateView();
+        render();
+      });
+    });
+
+    $("quickAdd").addEventListener("click", () => {
+      currentView = "add";
+      activateView();
+      syncFormDefaults();
+      $("memoInput").focus();
+    });
+
+    $("entryForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      addEntry({
+        date: $("dateInput").value,
+        payment: $("paymentInput").value,
+        category: $("categoryInput").value,
+        memo: $("memoInput").value,
+        amount: $("amountInput").value,
+        type: $("typeInput").value,
+        planned: $("plannedInput").checked
+      });
+      currentPayment = $("paymentInput").value;
+      $("memoInput").value = "";
+      $("amountInput").value = "";
+      $("plannedInput").checked = false;
+      currentView = "list";
+      activateView();
+      render();
+    });
+
+    $("clearForm").addEventListener("click", () => {
+      $("memoInput").value = "";
+      $("amountInput").value = "";
+      $("plannedInput").checked = false;
+    });
+
+    $("editForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const entry = state.entries.find((item) => item.id === $("editId").value);
+      if (!entry) return;
+      const date = new Date(`${$("editDate").value}T00:00:00`);
+      entry.date = $("editDate").value;
+      entry.period = periodKeyForDate(date);
+      entry.payment = $("editPayment").value;
+      entry.category = $("editCategory").value;
+      entry.memo = $("editMemo").value.trim();
+      entry.amount = parseAmount($("editAmount").value);
+      entry.type = $("editType").value;
+      entry.planned = $("editPlanned").checked;
+      currentPayment = entry.payment;
+      persist();
+      closeEdit();
+      render();
+    });
+
+    $("deleteEntry").addEventListener("click", () => {
+      if (!confirm("この行を削除しますか？")) return;
+      state.entries = state.entries.filter((item) => item.id !== $("editId").value);
+      persist();
+      closeEdit();
+      render();
+    });
+
+    $("closeEdit").addEventListener("click", closeEdit);
+    $("editModal").addEventListener("click", (event) => {
+      if (event.target === $("editModal")) closeEdit();
+    });
+
+    $("exportCsv").addEventListener("click", exportCsv);
+    $("importCsvBtn").addEventListener("click", () => $("importCsv").click());
+    $("importCsv").addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (file) importCsv(file);
+      event.target.value = "";
+    });
+
+    $("clearAll").addEventListener("click", () => {
+      if (!confirm("保存データをすべて削除しますか？")) return;
+      state = { entries: [], budgets: {} };
+      persist();
+      render();
+    });
+  </script>
+</body>
+</html>

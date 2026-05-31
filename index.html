@@ -418,16 +418,16 @@
     .calc-pad {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 7px;
-      margin-top: 8px;
+      gap: 8px;
+      margin-top: 12px;
     }
 
     .calc-key {
-      min-height: 48px;
+      min-height: 58px;
       border-radius: 8px;
       background: #eef2f4;
       color: #2b333a;
-      font-size: 22px;
+      font-size: 25px;
       font-weight: 650;
     }
 
@@ -443,6 +443,32 @@
 
     .calc-key.wide {
       grid-column: span 2;
+    }
+
+    .calculator-sheet {
+      padding: 14px;
+    }
+
+    .calc-display {
+      border: 1px solid #ccd2d7;
+      border-radius: 8px;
+      background: #fff;
+      min-height: 58px;
+      padding: 10px 12px;
+      font-size: 28px;
+      font-weight: 650;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .calc-sheet-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-top: 12px;
     }
 
     .report-list {
@@ -703,27 +729,6 @@
                 <span class="field-label">金額</span>
                 <input class="input" id="amountInput" inputmode="none" placeholder="1000+220+330" readonly required>
                 <div class="calc-preview" id="amountPreview"></div>
-                <div class="calc-pad" aria-label="電卓">
-                  <button class="calc-key" type="button" data-calc="7">7</button>
-                  <button class="calc-key" type="button" data-calc="8">8</button>
-                  <button class="calc-key" type="button" data-calc="9">9</button>
-                  <button class="calc-key operator" type="button" data-calc="/">÷</button>
-                  <button class="calc-key" type="button" data-calc="4">4</button>
-                  <button class="calc-key" type="button" data-calc="5">5</button>
-                  <button class="calc-key" type="button" data-calc="6">6</button>
-                  <button class="calc-key operator" type="button" data-calc="*">×</button>
-                  <button class="calc-key" type="button" data-calc="1">1</button>
-                  <button class="calc-key" type="button" data-calc="2">2</button>
-                  <button class="calc-key" type="button" data-calc="3">3</button>
-                  <button class="calc-key operator" type="button" data-calc="-">−</button>
-                  <button class="calc-key" type="button" data-calc="0">0</button>
-                  <button class="calc-key operator" type="button" data-calc="back">⌫</button>
-                  <button class="calc-key operator" type="button" data-calc="+">＋</button>
-                  <button class="calc-key equal" type="button" data-calc="equals">＝</button>
-                  <button class="calc-key operator wide" type="button" data-calc="clear">クリア</button>
-                  <button class="calc-key operator" type="button" data-calc="(">(</button>
-                  <button class="calc-key operator" type="button" data-calc=")">)</button>
-                </div>
               </label>
               <label>
                 <span class="field-label">種類</span>
@@ -909,6 +914,39 @@
     </div>
   </div>
 
+  <div class="modal" id="calcModal">
+    <div class="sheet calculator-sheet">
+      <h2>金額</h2>
+      <div class="calc-display" id="calcDisplay">0</div>
+      <div class="calc-preview" id="calcModalPreview"></div>
+      <div class="calc-pad" aria-label="電卓">
+        <button class="calc-key" type="button" data-calc="7">7</button>
+        <button class="calc-key" type="button" data-calc="8">8</button>
+        <button class="calc-key" type="button" data-calc="9">9</button>
+        <button class="calc-key operator" type="button" data-calc="/">÷</button>
+        <button class="calc-key" type="button" data-calc="4">4</button>
+        <button class="calc-key" type="button" data-calc="5">5</button>
+        <button class="calc-key" type="button" data-calc="6">6</button>
+        <button class="calc-key operator" type="button" data-calc="*">×</button>
+        <button class="calc-key" type="button" data-calc="1">1</button>
+        <button class="calc-key" type="button" data-calc="2">2</button>
+        <button class="calc-key" type="button" data-calc="3">3</button>
+        <button class="calc-key operator" type="button" data-calc="-">−</button>
+        <button class="calc-key" type="button" data-calc="0">0</button>
+        <button class="calc-key operator" type="button" data-calc="back">⌫</button>
+        <button class="calc-key operator" type="button" data-calc="+">＋</button>
+        <button class="calc-key equal" type="button" data-calc="equals">＝</button>
+        <button class="calc-key operator wide" type="button" data-calc="clear">クリア</button>
+        <button class="calc-key operator" type="button" data-calc="(">(</button>
+        <button class="calc-key operator" type="button" data-calc=")">)</button>
+      </div>
+      <div class="calc-sheet-actions">
+        <button class="ghost-btn" type="button" id="closeCalc">閉じる</button>
+        <button class="primary-btn" type="button" id="applyCalc">入力する</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const STORAGE_KEY = "personal-kakeibo-v1";
     const payments = [
@@ -944,6 +982,7 @@
     let currentPeriod = periodKeyForDate(new Date());
     let currentPayment = "d";
     let currentView = "list";
+    let calculatorValue = "";
 
     const yen = new Intl.NumberFormat("ja-JP");
     const $ = (id) => document.getElementById(id);
@@ -1076,6 +1115,12 @@
       $("amountPreview").textContent = amount > 0 ? `計算結果：${yen.format(amount)}円` : "計算できません";
     }
 
+    function updateCalculatorDisplay() {
+      $("calcDisplay").textContent = calculatorValue || "0";
+      const amount = parseAmount(calculatorValue);
+      $("calcModalPreview").textContent = calculatorValue && amount > 0 ? `計算結果：${yen.format(amount)}円` : "";
+    }
+
     function updatePresetAmountPreview() {
       const raw = $("presetAmount").value.trim();
       if (!raw) {
@@ -1087,18 +1132,38 @@
     }
 
     function pressCalcKey(key) {
-      const input = $("amountInput");
       if (key === "clear") {
-        input.value = "";
+        calculatorValue = "";
       } else if (key === "back") {
-        input.value = input.value.slice(0, -1);
+        calculatorValue = calculatorValue.slice(0, -1);
       } else if (key === "equals") {
-        const amount = parseAmount(input.value);
-        if (amount > 0) input.value = String(amount);
+        const amount = parseAmount(calculatorValue);
+        if (amount > 0) calculatorValue = String(amount);
       } else {
-        input.value += key;
+        calculatorValue += key;
       }
+      updateCalculatorDisplay();
+    }
+
+    function openCalculator() {
+      calculatorValue = $("amountInput").value.trim();
+      updateCalculatorDisplay();
+      $("calcModal").classList.add("open");
+    }
+
+    function closeCalculator() {
+      $("calcModal").classList.remove("open");
+    }
+
+    function applyCalculatorValue() {
+      const amount = parseAmount(calculatorValue);
+      if (calculatorValue && amount <= 0) {
+        alert("金額を入力してください");
+        return;
+      }
+      $("amountInput").value = calculatorValue;
       updateAmountPreview();
+      closeCalculator();
     }
 
     function category(id) {
@@ -1603,9 +1668,17 @@
     });
 
     $("amountInput").addEventListener("input", updateAmountPreview);
+    $("amountInput").addEventListener("click", openCalculator);
+    $("amountInput").addEventListener("focus", openCalculator);
 
     document.querySelectorAll("[data-calc]").forEach((button) => {
       button.addEventListener("click", () => pressCalcKey(button.dataset.calc));
+    });
+
+    $("closeCalc").addEventListener("click", closeCalculator);
+    $("applyCalc").addEventListener("click", applyCalculatorValue);
+    $("calcModal").addEventListener("click", (event) => {
+      if (event.target === $("calcModal")) closeCalculator();
     });
 
     $("presetAmount").addEventListener("input", updatePresetAmountPreview);

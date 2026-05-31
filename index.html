@@ -1503,6 +1503,7 @@
         category: data.category,
         memo: data.memo.trim(),
         amount,
+        amountExpression: String(data.amount).trim(),
         type: data.type,
         planned: Boolean(data.planned),
         createdAt: Date.now()
@@ -1519,7 +1520,7 @@
       $("editPayment").value = entry.payment;
       $("editCategory").value = entry.category;
       $("editMemo").value = entry.memo;
-      $("editAmount").value = entry.amount;
+      $("editAmount").value = entry.amountExpression || entry.amount;
       $("editSuica").checked = entry.type === "suica_use";
       $("editPlanned").checked = entry.planned;
       $("editModal").classList.add("open");
@@ -1530,7 +1531,7 @@
     }
 
     function exportCsv() {
-      const header = ["period","date","payment","category","memo","amount","type","planned"];
+      const header = ["period","date","payment","category","memo","amount","amountExpression","type","planned"];
       const lines = [header.join(",")].concat(state.entries.map((entry) => header.map((key) => csvCell(entry[key])).join(",")));
       const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
       const url = URL.createObjectURL(blob);
@@ -1593,6 +1594,7 @@
             category: row.category || "daily",
             memo: row.memo || "",
             amount: parseAmount(row.amount),
+            amountExpression: row.amountExpression || row.amount || "",
             type: row.type || "normal",
             planned: row.planned === "true",
             createdAt: Date.now()
@@ -1718,6 +1720,7 @@
         return;
       }
       entry.amount = amount;
+      entry.amountExpression = $("editAmount").value.trim();
       entry.type = $("editSuica").checked ? "suica_use" : "normal";
       entry.planned = $("editPlanned").checked;
       currentPayment = entry.payment;

@@ -895,7 +895,7 @@
         <div class="two-col">
           <label>
             <span class="field-label">金額</span>
-            <input class="input" id="editAmount" inputmode="numeric" required>
+            <input class="input" id="editAmount" inputmode="none" readonly required>
           </label>
           <label>
             <span class="field-label">種類</span>
@@ -988,6 +988,7 @@
     let currentPayment = "d";
     let currentView = "list";
     let calculatorValue = "";
+    let calculatorTarget = "amountInput";
 
     const yen = new Intl.NumberFormat("ja-JP");
     const $ = (id) => document.getElementById(id);
@@ -1150,8 +1151,9 @@
       updateCalculatorDisplay();
     }
 
-    function openCalculator() {
-      calculatorValue = $("amountInput").value.trim();
+    function openCalculator(targetId = "amountInput") {
+      calculatorTarget = targetId;
+      calculatorValue = $(calculatorTarget).value.trim();
       updateCalculatorDisplay();
       $("calcModal").classList.add("open");
     }
@@ -1166,8 +1168,8 @@
         alert("金額を入力してください");
         return;
       }
-      $("amountInput").value = calculatorValue;
-      updateAmountPreview();
+      $(calculatorTarget).value = calculatorValue;
+      if (calculatorTarget === "amountInput") updateAmountPreview();
       closeCalculator();
     }
 
@@ -1673,8 +1675,10 @@
     });
 
     $("amountInput").addEventListener("input", updateAmountPreview);
-    $("amountInput").addEventListener("click", openCalculator);
-    $("amountInput").addEventListener("focus", openCalculator);
+    $("amountInput").addEventListener("click", () => openCalculator("amountInput"));
+    $("amountInput").addEventListener("focus", () => openCalculator("amountInput"));
+    $("editAmount").addEventListener("click", () => openCalculator("editAmount"));
+    $("editAmount").addEventListener("focus", () => openCalculator("editAmount"));
 
     document.querySelectorAll("[data-calc]").forEach((button) => {
       button.addEventListener("click", () => pressCalcKey(button.dataset.calc));

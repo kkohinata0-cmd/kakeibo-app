@@ -227,10 +227,11 @@
 
     .entry {
       display: grid;
-      grid-template-columns: 1fr auto;
+      grid-template-columns: 1fr minmax(108px, 34%);
       min-height: 62px;
       border-bottom: 1px solid var(--line);
-      align-items: stretch;
+      align-items: center;
+      width: 100%;
     }
 
     .entry-main {
@@ -239,7 +240,7 @@
       gap: 0;
       min-width: 0;
       align-items: center;
-      padding: 7px 0 7px 10px;
+      padding: 7px 8px 7px 10px;
     }
 
     .cat-dot {
@@ -260,7 +261,8 @@
       display: flex;
       align-items: center;
       gap: 5px;
-      font-size: 20px;
+      font-size: 16px;
+      font-weight: 750;
       line-height: 1.2;
       white-space: nowrap;
       overflow: hidden;
@@ -277,25 +279,10 @@
     }
 
     .amount-wrap {
-      min-width: 104px;
-      display: grid;
-      grid-template-columns: 36px 1fr;
+      min-width: 0;
+      display: block;
       align-items: center;
-      padding-right: 10px;
-      gap: 4px;
-    }
-
-    .plus-mark {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: #9cabb5;
-      color: #fff;
-      font-size: 31px;
-      line-height: .8;
-      font-weight: 300;
+      padding: 0 12px 0 4px;
     }
 
     .amount {
@@ -303,6 +290,8 @@
       font-size: 22px;
       white-space: nowrap;
       font-variant-numeric: tabular-nums;
+      display: block;
+      width: 100%;
     }
 
     .empty {
@@ -661,7 +650,7 @@
     }
 
     @media (max-width: 360px) {
-      .entry-name { font-size: 18px; }
+      .entry-name { font-size: 15px; }
       .amount { font-size: 20px; }
       .summary-value { font-size: 18px; }
       .budget-row { grid-template-columns: 1fr 104px; }
@@ -1303,6 +1292,7 @@
       }
       rows.forEach((entry) => {
         const cat = category(entry.category);
+        const suicaText = entry.type === "suica_use" ? `(${yen.format(entry.amount)})` : "";
         const row = document.createElement("button");
         row.className = "entry";
         row.type = "button";
@@ -1310,12 +1300,11 @@
           <span class="entry-main">
             <span class="cat-dot" style="background:${cat.color}">${cat.icon}</span>
             <span class="entry-text">
-              <span class="entry-name">${entry.planned ? "🔒" : ""}${escapeHtml(entry.memo || cat.label)}</span>
-              <span class="entry-meta">${formatShortDate(entry.date)} / ${cat.label} / ${typeLabel(entry.type)}</span>
+              <span class="entry-name">${entry.planned ? "🔒" : ""}${formatShortDate(entry.date)} ${escapeHtml(entry.memo || cat.label)}${suicaText}</span>
+              <span class="entry-meta">${cat.label} / ${typeLabel(entry.type)}</span>
             </span>
           </span>
           <span class="amount-wrap">
-            <span class="plus-mark">＋</span>
             <span class="amount">${entry.type === "suica_use" ? "0" : "-" + yen.format(entry.amount)}</span>
           </span>
         `;

@@ -726,6 +726,10 @@
               </label>
             </div>
             <label class="check-row">
+              <input id="suicaInput" type="checkbox">
+              <span>Suica払いとして一覧にSを付ける</span>
+            </label>
+            <label class="check-row">
               <input id="plannedInput" type="checkbox">
               <span>鍵マークの予定として残り予算に入れる</span>
             </label>
@@ -797,6 +801,10 @@
                   <div class="calc-preview" id="presetAmountPreview"></div>
                 </label>
               </div>
+              <label class="check-row">
+                <input id="presetSuica" type="checkbox">
+                <span>Suica払いとして登録する</span>
+              </label>
               <label class="check-row">
                 <input id="presetPlanned" type="checkbox">
                 <span>予定として登録する</span>
@@ -871,6 +879,10 @@
             <input class="input" id="editAmount" inputmode="none" readonly required>
           </label>
         </div>
+        <label class="check-row">
+          <input id="editSuica" type="checkbox">
+          <span>Suica払いとして一覧にSを付ける</span>
+        </label>
         <label class="check-row">
           <input id="editPlanned" type="checkbox">
           <span>予定</span>
@@ -1257,6 +1269,7 @@
       }
       rows.forEach((entry) => {
         const cat = category(entry.category);
+        const suicaPrefix = entry.type === "suica_use" ? "S" : "";
         const row = document.createElement("button");
         row.className = "entry";
         row.type = "button";
@@ -1264,7 +1277,7 @@
           <span class="entry-main">
             <span class="cat-dot" style="background:${cat.color}">${cat.icon}</span>
             <span class="entry-text">
-              <span class="entry-name">${entry.planned ? "🔒" : ""}${formatShortDate(entry.date)} ${escapeHtml(entry.memo || cat.label)}</span>
+              <span class="entry-name">${entry.planned ? "🔒" : ""}${formatShortDate(entry.date)} ${suicaPrefix}${escapeHtml(entry.memo || cat.label)}</span>
             </span>
           </span>
           <span class="amount-wrap">
@@ -1352,6 +1365,7 @@
       $("categoryInput").value = preset.category;
       $("memoInput").value = preset.memo;
       $("amountInput").value = preset.amountExpression || String(preset.amount);
+      $("suicaInput").checked = preset.type === "suica_use";
       $("plannedInput").checked = preset.planned;
       updateAmountPreview();
     }
@@ -1374,13 +1388,14 @@
         memo,
         amount,
         amountExpression: $("presetAmount").value.trim(),
-        type: "normal",
+        type: $("presetSuica").checked ? "suica_use" : "normal",
         planned: $("presetPlanned").checked
       });
       persist();
       renderPresets();
       $("presetMemo").value = "";
       $("presetAmount").value = "";
+      $("presetSuica").checked = false;
       $("presetPlanned").checked = false;
       updatePresetAmountPreview();
       alert("よくある出費に追加しました");
@@ -1505,6 +1520,7 @@
       $("editCategory").value = entry.category;
       $("editMemo").value = entry.memo;
       $("editAmount").value = entry.amount;
+      $("editSuica").checked = entry.type === "suica_use";
       $("editPlanned").checked = entry.planned;
       $("editModal").classList.add("open");
     }
@@ -1661,7 +1677,7 @@
         category: $("categoryInput").value,
         memo: $("memoInput").value,
         amount: $("amountInput").value,
-        type: "normal",
+        type: $("suicaInput").checked ? "suica_use" : "normal",
         planned: $("plannedInput").checked
       });
       if (!added) return;
@@ -1670,6 +1686,7 @@
       $("memoInput").value = "";
       $("amountInput").value = "";
       updateAmountPreview();
+      $("suicaInput").checked = false;
       $("plannedInput").checked = false;
       currentView = "list";
       activateView();
@@ -1681,6 +1698,7 @@
       $("memoInput").value = "";
       $("amountInput").value = "";
       updateAmountPreview();
+      $("suicaInput").checked = false;
       $("plannedInput").checked = false;
     });
 
@@ -1700,7 +1718,7 @@
         return;
       }
       entry.amount = amount;
-      entry.type = "normal";
+      entry.type = $("editSuica").checked ? "suica_use" : "normal";
       entry.planned = $("editPlanned").checked;
       currentPayment = entry.payment;
       persist();

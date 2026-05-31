@@ -240,7 +240,7 @@
       gap: 0;
       min-width: 0;
       align-items: center;
-      padding: 7px 8px 7px 10px;
+      padding: 10px 8px 10px 10px;
     }
 
     .cat-dot {
@@ -264,15 +264,6 @@
       font-size: 16px;
       font-weight: 750;
       line-height: 1.2;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .entry-meta {
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 12px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -1301,7 +1292,6 @@
             <span class="cat-dot" style="background:${cat.color}">${cat.icon}</span>
             <span class="entry-text">
               <span class="entry-name">${entry.planned ? "🔒" : ""}${formatShortDate(entry.date)} ${escapeHtml(entry.memo || cat.label)}${suicaText}</span>
-              <span class="entry-meta">${cat.label} / ${typeLabel(entry.type)}</span>
             </span>
           </span>
           <span class="amount-wrap">

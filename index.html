@@ -343,6 +343,10 @@
       gap: 9px;
     }
 
+    .two-col.single {
+      grid-template-columns: 1fr;
+    }
+
     .check-row {
       display: flex;
       gap: 8px;
@@ -714,19 +718,11 @@
               <span class="field-label">項目</span>
               <input class="input" id="memoInput" placeholder="例：1a生活消臭">
             </label>
-            <div class="two-col">
+            <div class="two-col single">
               <label>
                 <span class="field-label">金額</span>
                 <input class="input" id="amountInput" inputmode="none" placeholder="1000+220+330" readonly required>
                 <div class="calc-preview" id="amountPreview"></div>
-              </label>
-              <label>
-                <span class="field-label">種類</span>
-                <select class="select" id="typeInput">
-                  <option value="normal">通常の支出</option>
-                  <option value="suica_charge">Suicaチャージ</option>
-                  <option value="suica_use">Suicaで使用</option>
-                </select>
               </label>
             </div>
             <label class="check-row">
@@ -738,7 +734,7 @@
               <button class="ghost-btn" type="button" id="clearForm">クリア</button>
             </div>
           </form>
-          <p class="note">金額は「1000+220」「5000-1200」「(980+120)*2」のように入力できます。クレジットのSuicaチャージは支払い予算にだけ反映し、Suicaで使用は月のカテゴリー集計に反映します。</p>
+          <p class="note">金額は「1000+220」「5000-1200」「(980+120)*2」のように入力できます。支払い方法ごとに、そのまま予算と月集計へ反映します。</p>
         </div>
       </section>
 
@@ -794,19 +790,11 @@
                 <span class="field-label">項目</span>
                 <input class="input" id="presetMemo" placeholder="例：通勤交通費">
               </label>
-              <div class="two-col">
+              <div class="two-col single">
                 <label>
                   <span class="field-label">金額</span>
                   <input class="input" id="presetAmount" inputmode="decimal" placeholder="420">
                   <div class="calc-preview" id="presetAmountPreview"></div>
-                </label>
-                <label>
-                  <span class="field-label">種類</span>
-                  <select class="select" id="presetType">
-                    <option value="normal">通常の支出</option>
-                    <option value="suica_charge">Suicaチャージ</option>
-                    <option value="suica_use">Suicaで使用</option>
-                  </select>
                 </label>
               </div>
               <label class="check-row">
@@ -877,18 +865,10 @@
           <span class="field-label">項目</span>
           <input class="input" id="editMemo">
         </label>
-        <div class="two-col">
+        <div class="two-col single">
           <label>
             <span class="field-label">金額</span>
             <input class="input" id="editAmount" inputmode="none" readonly required>
-          </label>
-          <label>
-            <span class="field-label">種類</span>
-            <select class="select" id="editType">
-              <option value="normal">通常の支出</option>
-              <option value="suica_charge">Suicaチャージ</option>
-              <option value="suica_use">Suicaで使用</option>
-            </select>
           </label>
         </div>
         <label class="check-row">
@@ -1182,18 +1162,12 @@
       return payments.find((item) => item.id === id)?.label || id;
     }
 
-    function typeLabel(type) {
-      if (type === "suica_charge") return "Suicaチャージ";
-      if (type === "suica_use") return "Suica使用";
-      return "通常";
-    }
-
     function isBudgetImpact(entry) {
-      return entry.type !== "suica_use";
+      return true;
     }
 
     function isCategoryImpact(entry) {
-      return entry.type !== "suica_charge";
+      return true;
     }
 
     function categoryRowsForPeriod(period) {
@@ -1283,7 +1257,6 @@
       }
       rows.forEach((entry) => {
         const cat = category(entry.category);
-        const suicaText = entry.type === "suica_use" ? `(${yen.format(entry.amount)})` : "";
         const row = document.createElement("button");
         row.className = "entry";
         row.type = "button";
@@ -1291,11 +1264,11 @@
           <span class="entry-main">
             <span class="cat-dot" style="background:${cat.color}">${cat.icon}</span>
             <span class="entry-text">
-              <span class="entry-name">${entry.planned ? "🔒" : ""}${formatShortDate(entry.date)} ${escapeHtml(entry.memo || cat.label)}${suicaText}</span>
+              <span class="entry-name">${entry.planned ? "🔒" : ""}${formatShortDate(entry.date)} ${escapeHtml(entry.memo || cat.label)}</span>
             </span>
           </span>
           <span class="amount-wrap">
-            <span class="amount">${entry.type === "suica_use" ? "0" : "-" + yen.format(entry.amount)}</span>
+            <span class="amount">-${yen.format(entry.amount)}</span>
           </span>
         `;
         row.addEventListener("click", () => openEdit(entry.id));
@@ -1379,7 +1352,6 @@
       $("categoryInput").value = preset.category;
       $("memoInput").value = preset.memo;
       $("amountInput").value = preset.amountExpression || String(preset.amount);
-      $("typeInput").value = preset.type;
       $("plannedInput").checked = preset.planned;
       updateAmountPreview();
     }
@@ -1402,7 +1374,7 @@
         memo,
         amount,
         amountExpression: $("presetAmount").value.trim(),
-        type: $("presetType").value,
+        type: "normal",
         planned: $("presetPlanned").checked
       });
       persist();
@@ -1533,7 +1505,6 @@
       $("editCategory").value = entry.category;
       $("editMemo").value = entry.memo;
       $("editAmount").value = entry.amount;
-      $("editType").value = entry.type;
       $("editPlanned").checked = entry.planned;
       $("editModal").classList.add("open");
     }
@@ -1690,7 +1661,7 @@
         category: $("categoryInput").value,
         memo: $("memoInput").value,
         amount: $("amountInput").value,
-        type: $("typeInput").value,
+        type: "normal",
         planned: $("plannedInput").checked
       });
       if (!added) return;
@@ -1729,7 +1700,7 @@
         return;
       }
       entry.amount = amount;
-      entry.type = $("editType").value;
+      entry.type = "normal";
       entry.planned = $("editPlanned").checked;
       currentPayment = entry.payment;
       persist();

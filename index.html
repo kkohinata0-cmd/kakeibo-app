@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="家計簿">
   <meta name="theme-color" content="#c7a982">
@@ -34,6 +34,7 @@
 
     * { box-sizing: border-box; }
     html, body { height: 100%; }
+    html { touch-action: manipulation; }
 
     body {
       margin: 0;
@@ -52,6 +53,7 @@
       border: 0;
       background: transparent;
       -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
 
     .app-shell {
@@ -434,6 +436,9 @@
       color: #2b333a;
       font-size: 25px;
       font-weight: 650;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
     }
 
     .calc-key.operator {
@@ -1682,6 +1687,7 @@
 
     document.querySelectorAll("[data-calc]").forEach((button) => {
       button.addEventListener("click", () => pressCalcKey(button.dataset.calc));
+      button.addEventListener("dblclick", (event) => event.preventDefault());
     });
 
     $("closeCalc").addEventListener("click", closeCalculator);

@@ -6,6 +6,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="家計簿">
   <meta name="theme-color" content="#c7a982">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="apple-touch-icon.png">
   <title>家計簿</title>
   <style>
     :root {
@@ -15,7 +17,10 @@
       --theme-start: #e6a0a5;
       --theme-end: #eba65f;
       --theme-soft: #fff0e9;
-      --theme-gradient: linear-gradient(135deg, var(--theme-start), var(--theme-end));
+      --theme-gradient:
+        radial-gradient(circle at 24% 18%, rgba(255,255,255,.18), transparent 28%),
+        radial-gradient(circle at 78% 26%, rgba(255,244,219,.16), transparent 30%),
+        linear-gradient(135deg, var(--theme-start), var(--theme-end));
       --ink: #171717;
       --muted: #7a7a7a;
       --line: #d9dde2;
@@ -964,18 +969,18 @@
       { id: "star", label: "★", icon: "⭐", color: "#d5c0ee" }
     ];
     const monthlyThemes = [
-      { name: "新春", start: "#b88a55", end: "#c74f62", soft: "#fff3ea" },
-      { name: "梅の香", start: "#b76586", end: "#d9a15f", soft: "#fff0f4" },
-      { name: "桜", start: "#e28ba2", end: "#f0b58b", soft: "#fff1f5" },
-      { name: "花霞", start: "#b6a46a", end: "#df8f8f", soft: "#fff4ed" },
-      { name: "新緑", start: "#5d9274", end: "#d2a858", soft: "#eef8f0" },
-      { name: "紫陽花", start: "#7b78b8", end: "#6fb3b0", soft: "#f0f3ff" },
-      { name: "七夕", start: "#355c9f", end: "#d78f70", soft: "#eef3ff" },
-      { name: "夏祭り", start: "#2f7f91", end: "#e58b4a", soft: "#edf8f7" },
-      { name: "月見", start: "#6f6a9d", end: "#d6a84f", soft: "#f5f1ff" },
-      { name: "金木犀", start: "#9a6a43", end: "#e09a34", soft: "#fff4df" },
-      { name: "紅葉", start: "#8e4f59", end: "#c47a3f", soft: "#fff0e8" },
-      { name: "冬灯り", start: "#365f7c", end: "#b36b83", soft: "#edf5fa" }
+      { name: "新春", start: "#d29d64", end: "#de6f82", soft: "#fff5ee" },
+      { name: "梅の香", start: "#d77fa2", end: "#efb26f", soft: "#fff2f6" },
+      { name: "桜", start: "#f19bb0", end: "#ffc39b", soft: "#fff3f6" },
+      { name: "花霞", start: "#cec17b", end: "#f0a3a1", soft: "#fff6ef" },
+      { name: "新緑", start: "#7fba95", end: "#e8bc67", soft: "#f1fbf3" },
+      { name: "紫陽花", start: "#9a96d3", end: "#83cbc7", soft: "#f3f5ff" },
+      { name: "誕生月", start: "#ff74a3", end: "#ffac5f", soft: "#fff2ec" },
+      { name: "夏祭り", start: "#4aa6b6", end: "#f6a05d", soft: "#f0fbfa" },
+      { name: "月見", start: "#8a84bf", end: "#ecc264", soft: "#f7f3ff" },
+      { name: "金木犀", start: "#bd8557", end: "#f0ad43", soft: "#fff6e3" },
+      { name: "紅葉", start: "#b46570", end: "#dd9254", soft: "#fff2eb" },
+      { name: "冬灯り", start: "#5785a4", end: "#cc8199", soft: "#f0f7fb" }
     ];
 
     let state = loadState();

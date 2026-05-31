@@ -315,7 +315,7 @@
       padding: 8px 10px calc(8px + var(--safe-bottom));
       background: var(--theme-gradient);
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 4px;
       color: #fff;
       box-shadow: 0 -1px 0 rgba(0,0,0,.08);
@@ -403,7 +403,7 @@
 
     .preset-row {
       display: grid;
-      grid-template-columns: 1fr 116px;
+      grid-template-columns: 1fr;
       gap: 8px;
       align-items: end;
     }
@@ -413,6 +413,36 @@
       color: var(--muted);
       font-size: 12px;
       min-height: 18px;
+    }
+
+    .calc-pad {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 7px;
+      margin-top: 8px;
+    }
+
+    .calc-key {
+      min-height: 48px;
+      border-radius: 8px;
+      background: #eef2f4;
+      color: #2b333a;
+      font-size: 22px;
+      font-weight: 650;
+    }
+
+    .calc-key.operator {
+      background: var(--theme-soft);
+      color: #7b4b43;
+    }
+
+    .calc-key.equal {
+      background: var(--theme-gradient);
+      color: #fff;
+    }
+
+    .calc-key.wide {
+      grid-column: span 2;
     }
 
     .report-list {
@@ -644,12 +674,11 @@
           <form class="form-grid" id="entryForm">
             <div class="preset-row">
               <label>
-                <span class="field-label">保存済み出費</span>
+                <span class="field-label">よくある出費</span>
                 <select class="select" id="presetInput">
                   <option value="">選択しない</option>
                 </select>
               </label>
-              <button class="ghost-btn" type="button" id="savePreset">保存</button>
             </div>
             <div class="two-col">
               <label>
@@ -672,8 +701,29 @@
             <div class="two-col">
               <label>
                 <span class="field-label">金額</span>
-                <input class="input" id="amountInput" inputmode="decimal" placeholder="1000+220+330" required>
+                <input class="input" id="amountInput" inputmode="none" placeholder="1000+220+330" readonly required>
                 <div class="calc-preview" id="amountPreview"></div>
+                <div class="calc-pad" aria-label="電卓">
+                  <button class="calc-key" type="button" data-calc="7">7</button>
+                  <button class="calc-key" type="button" data-calc="8">8</button>
+                  <button class="calc-key" type="button" data-calc="9">9</button>
+                  <button class="calc-key operator" type="button" data-calc="/">÷</button>
+                  <button class="calc-key" type="button" data-calc="4">4</button>
+                  <button class="calc-key" type="button" data-calc="5">5</button>
+                  <button class="calc-key" type="button" data-calc="6">6</button>
+                  <button class="calc-key operator" type="button" data-calc="*">×</button>
+                  <button class="calc-key" type="button" data-calc="1">1</button>
+                  <button class="calc-key" type="button" data-calc="2">2</button>
+                  <button class="calc-key" type="button" data-calc="3">3</button>
+                  <button class="calc-key operator" type="button" data-calc="-">−</button>
+                  <button class="calc-key" type="button" data-calc="0">0</button>
+                  <button class="calc-key operator" type="button" data-calc="back">⌫</button>
+                  <button class="calc-key operator" type="button" data-calc="+">＋</button>
+                  <button class="calc-key equal" type="button" data-calc="equals">＝</button>
+                  <button class="calc-key operator wide" type="button" data-calc="clear">クリア</button>
+                  <button class="calc-key operator" type="button" data-calc="(">(</button>
+                  <button class="calc-key operator" type="button" data-calc=")">)</button>
+                </div>
               </label>
               <label>
                 <span class="field-label">種類</span>
@@ -730,6 +780,54 @@
         </div>
       </section>
 
+      <section class="view" data-view="common">
+        <div class="panel-pad settings-stack">
+          <div>
+            <div class="section-title">よくある出費を登録</div>
+            <form class="form-grid" id="commonPresetForm">
+              <div class="two-col">
+                <label>
+                  <span class="field-label">支払い</span>
+                  <select class="select" id="presetPayment"></select>
+                </label>
+                <label>
+                  <span class="field-label">カテゴリー</span>
+                  <select class="select" id="presetCategory"></select>
+                </label>
+              </div>
+              <label>
+                <span class="field-label">項目</span>
+                <input class="input" id="presetMemo" placeholder="例：通勤交通費">
+              </label>
+              <div class="two-col">
+                <label>
+                  <span class="field-label">金額</span>
+                  <input class="input" id="presetAmount" inputmode="decimal" placeholder="420">
+                  <div class="calc-preview" id="presetAmountPreview"></div>
+                </label>
+                <label>
+                  <span class="field-label">種類</span>
+                  <select class="select" id="presetType">
+                    <option value="normal">通常の支出</option>
+                    <option value="suica_charge">Suicaチャージ</option>
+                    <option value="suica_use">Suicaで使用</option>
+                  </select>
+                </label>
+              </div>
+              <label class="check-row">
+                <input id="presetPlanned" type="checkbox">
+                <span>予定として登録する</span>
+              </label>
+              <button class="primary-btn" type="submit">よくある出費に追加</button>
+            </form>
+          </div>
+          <div>
+            <div class="section-title">登録済み</div>
+            <div class="preset-list" id="presetList"></div>
+          </div>
+        </div>
+      </section>
+
       <section class="view" data-view="settings">
         <div class="panel-pad settings-stack">
           <div>
@@ -739,10 +837,6 @@
               <button class="ghost-btn" id="importCsvBtn">CSV読込</button>
             </div>
             <input class="hidden-file" id="importCsv" type="file" accept=".csv,text/csv">
-          </div>
-          <div>
-            <div class="section-title">保存済み出費</div>
-            <div class="preset-list" id="presetList"></div>
           </div>
           <div>
             <div class="section-title">月の扱い</div>
@@ -760,6 +854,7 @@
       <button class="nav-btn active" data-nav="list" aria-label="一覧">☰</button>
       <button class="nav-btn" id="quickAdd" aria-label="追加">＋</button>
       <button class="nav-btn" data-nav="report" aria-label="集計">◕</button>
+      <button class="nav-btn" data-nav="common" aria-label="よくある出費">☆</button>
       <button class="nav-btn" data-nav="settings" aria-label="設定">⚙</button>
     </nav>
   </div>
@@ -981,6 +1076,31 @@
       $("amountPreview").textContent = amount > 0 ? `計算結果：${yen.format(amount)}円` : "計算できません";
     }
 
+    function updatePresetAmountPreview() {
+      const raw = $("presetAmount").value.trim();
+      if (!raw) {
+        $("presetAmountPreview").textContent = "";
+        return;
+      }
+      const amount = parseAmount(raw);
+      $("presetAmountPreview").textContent = amount > 0 ? `計算結果：${yen.format(amount)}円` : "計算できません";
+    }
+
+    function pressCalcKey(key) {
+      const input = $("amountInput");
+      if (key === "clear") {
+        input.value = "";
+      } else if (key === "back") {
+        input.value = input.value.slice(0, -1);
+      } else if (key === "equals") {
+        const amount = parseAmount(input.value);
+        if (amount > 0) input.value = String(amount);
+      } else {
+        input.value += key;
+      }
+      updateAmountPreview();
+    }
+
     function category(id) {
       return categories.find((item) => item.id === id) || categories[0];
     }
@@ -1172,7 +1292,7 @@
       const list = $("presetList");
       list.innerHTML = "";
       if (!state.presets.length) {
-        list.innerHTML = `<p class="note">入力画面で内容を入れて「保存」を押すと、ここに登録されます。</p>`;
+        list.innerHTML = `<p class="note">交通費など、毎回使う出費をここで登録できます。</p>`;
         return;
       }
       state.presets.forEach((preset) => {
@@ -1187,7 +1307,7 @@
           <button class="mini-delete" type="button" aria-label="削除">×</button>
         `;
         item.querySelector("button").addEventListener("click", () => {
-          if (!confirm("この保存済み出費を削除しますか？")) return;
+          if (!confirm("このよくある出費を削除しますか？")) return;
           state.presets = state.presets.filter((saved) => saved.id !== preset.id);
           persist();
           renderPresets();
@@ -1209,8 +1329,8 @@
     }
 
     function saveCurrentPreset() {
-      const amount = parseAmount($("amountInput").value);
-      const memo = $("memoInput").value.trim();
+      const amount = parseAmount($("presetAmount").value);
+      const memo = $("presetMemo").value.trim();
       if (!memo) {
         alert("保存する項目名を入力してください");
         return;
@@ -1221,17 +1341,21 @@
       }
       state.presets.push({
         id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
-        payment: $("paymentInput").value,
-        category: $("categoryInput").value,
+        payment: $("presetPayment").value,
+        category: $("presetCategory").value,
         memo,
         amount,
-        amountExpression: $("amountInput").value.trim(),
-        type: $("typeInput").value,
-        planned: $("plannedInput").checked
+        amountExpression: $("presetAmount").value.trim(),
+        type: $("presetType").value,
+        planned: $("presetPlanned").checked
       });
       persist();
       renderPresets();
-      alert("保存済み出費に追加しました");
+      $("presetMemo").value = "";
+      $("presetAmount").value = "";
+      $("presetPlanned").checked = false;
+      updatePresetAmountPreview();
+      alert("よくある出費に追加しました");
     }
 
     function renderMonthTotals() {
@@ -1305,9 +1429,11 @@
       const paymentOptions = payments.map((item) => `<option value="${item.id}">${item.label}</option>`).join("");
       $("paymentInput").innerHTML = paymentOptions;
       $("editPayment").innerHTML = paymentOptions;
+      $("presetPayment").innerHTML = paymentOptions;
       const categoryOptions = categories.map((item) => `<option value="${item.id}">${item.icon} ${item.label}</option>`).join("");
       $("categoryInput").innerHTML = categoryOptions;
       $("editCategory").innerHTML = categoryOptions;
+      $("presetCategory").innerHTML = categoryOptions;
     }
 
     function syncFormDefaults() {
@@ -1476,9 +1602,18 @@
       applyPreset(event.target.value);
     });
 
-    $("savePreset").addEventListener("click", saveCurrentPreset);
-
     $("amountInput").addEventListener("input", updateAmountPreview);
+
+    document.querySelectorAll("[data-calc]").forEach((button) => {
+      button.addEventListener("click", () => pressCalcKey(button.dataset.calc));
+    });
+
+    $("presetAmount").addEventListener("input", updatePresetAmountPreview);
+
+    $("commonPresetForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      saveCurrentPreset();
+    });
 
     $("entryForm").addEventListener("submit", (event) => {
       event.preventDefault();

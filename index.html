@@ -710,6 +710,13 @@
                 <select class="select" id="paymentInput"></select>
               </label>
             </div>
+            <div class="two-col single">
+              <label>
+                <span class="field-label">金額</span>
+                <input class="input" id="amountInput" inputmode="none" placeholder="1000+220+330" readonly required>
+                <div class="calc-preview" id="amountPreview"></div>
+              </label>
+            </div>
             <label>
               <span class="field-label">カテゴリー</span>
               <select class="select" id="categoryInput"></select>
@@ -718,13 +725,6 @@
               <span class="field-label">項目</span>
               <input class="input" id="memoInput" placeholder="例：1a生活消臭">
             </label>
-            <div class="two-col single">
-              <label>
-                <span class="field-label">金額</span>
-                <input class="input" id="amountInput" inputmode="none" placeholder="1000+220+330" readonly required>
-                <div class="calc-preview" id="amountPreview"></div>
-              </label>
-            </div>
             <label class="check-row">
               <input id="suicaInput" type="checkbox">
               <span>Suica払いとして一覧にSを付ける</span>
@@ -843,7 +843,7 @@
 
     <nav class="bottom-nav" aria-label="メニュー">
       <button class="nav-btn active" data-nav="list" aria-label="一覧">☰</button>
-      <button class="nav-btn" id="quickAdd" aria-label="追加">＋</button>
+      <button class="nav-btn" id="quickAdd" data-nav="add" aria-label="追加">＋</button>
       <button class="nav-btn" data-nav="report" aria-label="集計">◕</button>
       <button class="nav-btn" data-nav="common" aria-label="よくある出費">☆</button>
       <button class="nav-btn" data-nav="settings" aria-label="設定">⚙</button>
@@ -963,7 +963,7 @@
     let state = loadState();
     let currentPeriod = periodKeyForDate(new Date());
     let currentPayment = "d";
-    let currentView = "list";
+    let currentView = "add";
     let calculatorValue = "";
     let calculatorTarget = "amountInput";
 
@@ -1608,6 +1608,7 @@
     }
 
     fillSelects();
+    activateView();
     render();
 
     $("prevMonth").addEventListener("click", () => {
@@ -1640,7 +1641,8 @@
       currentView = "add";
       activateView();
       syncFormDefaults();
-      $("memoInput").focus();
+      $("amountInput").focus();
+      openCalculator("amountInput");
     });
 
     $("presetInput").addEventListener("change", (event) => {

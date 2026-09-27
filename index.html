@@ -139,6 +139,10 @@
       font-weight: 700;
     }
 
+    .topbar.input-mode .payment-tabs {
+      display: none;
+    }
+
     .summary {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -399,6 +403,150 @@
       align-items: end;
     }
 
+    .entry-form-head {
+      display: grid;
+      gap: 3px;
+      margin: 2px 0 14px;
+    }
+
+    .entry-form-head h1 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.25;
+    }
+
+    .entry-form-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .entry-quick-fill {
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f7f8f9;
+    }
+
+    .entry-step {
+      display: grid;
+      gap: 8px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .entry-step > label {
+      display: grid;
+      gap: 8px;
+    }
+
+    .entry-step-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    .entry-step-number {
+      width: 25px;
+      height: 25px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: var(--theme-gradient);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .amount-entry {
+      min-height: 60px;
+      padding: 10px 14px;
+      border: 2px solid var(--theme-end);
+      background: var(--theme-soft);
+      text-align: right;
+      font-size: 25px;
+      font-weight: 750;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .amount-entry::placeholder {
+      color: #9b887b;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .entry-choice-grid {
+      display: grid;
+      gap: 7px;
+    }
+
+    .entry-choice-grid.payment-choices {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .entry-choice-grid.category-choices {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .entry-choice {
+      min-width: 0;
+      min-height: 48px;
+      padding: 7px 5px;
+      border: 1px solid #ccd2d7;
+      border-radius: 8px;
+      background: #fff;
+      color: #444;
+      display: grid;
+      place-items: center;
+      gap: 2px;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .entry-choice .choice-icon {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .entry-choice.active {
+      border-color: var(--theme-end);
+      background: var(--theme-soft);
+      color: #5e4330;
+      box-shadow: inset 0 0 0 1px var(--theme-end);
+    }
+
+    .visually-hidden-select {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .entry-options {
+      display: grid;
+      gap: 2px;
+      padding: 10px 0 2px;
+    }
+
+    .entry-actions {
+      grid-template-columns: 2fr 1fr;
+      margin-top: 4px;
+    }
+
+    .entry-actions .primary-btn {
+      min-height: 54px;
+      font-size: 17px;
+    }
+
     .calc-preview {
       margin-top: 5px;
       color: var(--muted);
@@ -607,6 +755,14 @@
       font-variant-numeric: tabular-nums;
     }
 
+    .budget-total-detail {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 14px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
     .budget-plan-list {
       display: grid;
       gap: 10px;
@@ -633,16 +789,70 @@
     }
 
     .budget-plan-item {
-      grid-template-columns: 1fr auto 38px;
+      grid-template-columns: minmax(0, 1fr) auto 38px;
       border-top: 1px solid var(--line);
       font-size: 14px;
     }
 
-    .budget-plan-item span {
+    .budget-plan-main {
+      display: grid;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .budget-plan-main > span {
       min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+
+    .budget-status-toggle {
+      display: inline-grid;
+      grid-template-columns: repeat(2, 1fr);
+      width: 126px;
+      padding: 2px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f4f5f6;
+    }
+
+    .budget-status-btn {
+      min-height: 30px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .budget-status-btn.active[data-status="planned"] {
+      color: #805a00;
+      background: #fff1bf;
+    }
+
+    .budget-status-btn.active[data-status="confirmed"] {
+      color: #176b55;
+      background: #dff5ed;
+    }
+
+    .budget-amount-edit {
+      display: grid;
+      justify-items: end;
+      gap: 2px;
+      padding: 6px 8px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 750;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .budget-amount-edit small {
+      color: var(--theme-end);
+      font-size: 10px;
+      font-weight: 700;
     }
 
     .bar {
@@ -759,6 +969,8 @@
 
     .modal.open { display: flex; }
 
+    #calcModal { z-index: 50; }
+
     .sheet {
       width: min(100%, 500px);
       max-height: min(86svh, 760px);
@@ -786,6 +998,7 @@
       .summary-value { font-size: 18px; }
       .budget-row { grid-template-columns: 1fr 104px; }
       .nav-btn { font-size: 22px; }
+      .entry-choice-grid.category-choices { grid-template-columns: repeat(3, 1fr); }
     }
   </style>
 </head>
@@ -827,55 +1040,67 @@
 
       <section class="view" data-view="add">
         <div class="panel-pad">
-          <div class="section-title">入力</div>
+          <div class="entry-form-head">
+            <h1>支出を入力</h1>
+            <p id="entryPeriodHint">今月分の支出</p>
+          </div>
           <form class="form-grid" id="entryForm">
-            <div class="preset-row">
+            <div class="preset-row entry-quick-fill">
               <label>
-                <span class="field-label">よくある出費</span>
+                <span class="field-label">よくある出費から呼び出す</span>
                 <select class="select" id="presetInput">
                   <option value="">選択しない</option>
                 </select>
               </label>
             </div>
-            <div class="two-col">
+
+            <div class="entry-step">
+              <div class="entry-step-title"><span class="entry-step-number">1</span><span>金額</span></div>
+              <input class="input amount-entry" id="amountInput" inputmode="none" placeholder="タップして金額を入力" readonly required>
+              <div class="calc-preview" id="amountPreview"></div>
+            </div>
+
+            <div class="entry-step">
               <label>
-                <span class="field-label">日付</span>
+                <span class="entry-step-title"><span class="entry-step-number">2</span><span>何を買った？</span></span>
+                <input class="input" id="memoInput" placeholder="例：洗剤、ランチ、服">
+              </label>
+            </div>
+
+            <div class="entry-step">
+              <div class="entry-step-title"><span class="entry-step-number">3</span><span>カテゴリー</span></div>
+              <select class="select visually-hidden-select" id="categoryInput" aria-label="カテゴリー"></select>
+              <div class="entry-choice-grid category-choices" id="categoryChoices"></div>
+            </div>
+
+            <div class="entry-step">
+              <div class="entry-step-title"><span class="entry-step-number">4</span><span>支払い方法</span></div>
+              <select class="select visually-hidden-select" id="paymentInput" aria-label="支払い方法"></select>
+              <div class="entry-choice-grid payment-choices" id="paymentChoices"></div>
+            </div>
+
+            <div class="entry-step">
+              <label>
+                <span class="entry-step-title"><span class="entry-step-number">5</span><span>日付</span></span>
                 <input class="input" id="dateInput" type="date" required>
               </label>
-              <label>
-                <span class="field-label">支払い</span>
-                <select class="select" id="paymentInput"></select>
+            </div>
+
+            <div class="entry-options">
+              <label class="check-row">
+                <input id="suicaInput" type="checkbox">
+                <span>Suica払いとして記録</span>
+              </label>
+              <label class="check-row">
+                <input id="plannedInput" type="checkbox">
+                <span>まだ使っていない予定の出費</span>
               </label>
             </div>
-            <div class="two-col single">
-              <label>
-                <span class="field-label">金額</span>
-                <input class="input" id="amountInput" inputmode="none" placeholder="1000+220+330" readonly required>
-                <div class="calc-preview" id="amountPreview"></div>
-              </label>
-            </div>
-            <label>
-              <span class="field-label">カテゴリー</span>
-              <select class="select" id="categoryInput"></select>
-            </label>
-            <label>
-              <span class="field-label">項目</span>
-              <input class="input" id="memoInput" placeholder="例：1a生活消臭">
-            </label>
-            <label class="check-row">
-              <input id="suicaInput" type="checkbox">
-              <span>Suica払いとして一覧にSを付ける</span>
-            </label>
-            <label class="check-row">
-              <input id="plannedInput" type="checkbox">
-              <span>鍵マークの予定として残り予算に入れる</span>
-            </label>
-            <div class="action-row">
-              <button class="primary-btn" type="submit">追加</button>
+            <div class="action-row entry-actions">
+              <button class="primary-btn" type="submit">この内容で追加</button>
               <button class="ghost-btn" type="button" id="clearForm">クリア</button>
             </div>
           </form>
-          <p class="note">金額は「1000+220」「5000-1200」「(980+120)*2」のように入力できます。支払い方法ごとに、そのまま予算と月集計へ反映します。</p>
         </div>
       </section>
 
@@ -934,7 +1159,7 @@
               <div class="two-col single">
                 <label>
                   <span class="field-label">金額</span>
-                  <input class="input" id="presetAmount" inputmode="decimal" placeholder="420">
+                  <input class="input" id="presetAmount" inputmode="none" placeholder="1000+220" readonly>
                   <div class="calc-preview" id="presetAmountPreview"></div>
                 </label>
               </div>
@@ -965,6 +1190,10 @@
           <div class="budget-total-card">
             <span id="budgetPlanMonthLabel">今月の予算メモ</span>
             <strong id="budgetPlanGrandTotal">0円</strong>
+            <div class="budget-total-detail">
+              <span id="budgetPlanConfirmedTotal">確定 0円</span>
+              <span id="budgetPlanPlannedTotal">予定 0円</span>
+            </div>
           </div>
           <form class="budget-plan-form" id="budgetPlanForm">
             <div class="two-col">
@@ -1102,6 +1331,24 @@
     </div>
   </div>
 
+  <div class="modal" id="budgetPlanEditModal">
+    <div class="sheet">
+      <h2>予算メモの金額変更</h2>
+      <form class="form-grid" id="budgetPlanEditForm">
+        <input type="hidden" id="budgetPlanEditId">
+        <label>
+          <span class="field-label">金額</span>
+          <input class="input" id="budgetPlanEditAmount" inputmode="none" readonly required>
+          <div class="calc-preview" id="budgetPlanEditAmountPreview"></div>
+        </label>
+        <div class="action-row">
+          <button class="primary-btn" type="submit">変更を保存</button>
+          <button class="ghost-btn" type="button" id="closeBudgetPlanEdit">閉じる</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script>
     const STORAGE_KEY = "personal-kakeibo-v1";
     const payments = [
@@ -1151,6 +1398,9 @@
           if (!saved.budgets) saved.budgets = {};
           if (!Array.isArray(saved.presets)) saved.presets = [];
           if (!Array.isArray(saved.budgetPlans)) saved.budgetPlans = [];
+          saved.budgetPlans.forEach((item) => {
+            if (typeof item.planned !== "boolean") item.planned = true;
+          });
           return saved;
         }
       } catch (error) {}
@@ -1299,6 +1549,16 @@
       $("budgetPlanAmountPreview").textContent = amount > 0 ? `計算結果：${yen.format(amount)}円` : "計算できません";
     }
 
+    function updateBudgetPlanEditAmountPreview() {
+      const raw = $("budgetPlanEditAmount").value.trim();
+      if (!raw) {
+        $("budgetPlanEditAmountPreview").textContent = "";
+        return;
+      }
+      const amount = parseAmount(raw);
+      $("budgetPlanEditAmountPreview").textContent = amount > 0 ? `計算結果：${yen.format(amount)}円` : "計算できません";
+    }
+
     function pressCalcKey(key) {
       if (key === "clear") {
         calculatorValue = "";
@@ -1332,7 +1592,9 @@
       }
       $(calculatorTarget).value = calculatorValue;
       if (calculatorTarget === "amountInput") updateAmountPreview();
+      if (calculatorTarget === "presetAmount") updatePresetAmountPreview();
       if (calculatorTarget === "budgetPlanAmount") updateBudgetPlanAmountPreview();
+      if (calculatorTarget === "budgetPlanEditAmount") updateBudgetPlanEditAmountPreview();
       closeCalculator();
     }
 
@@ -1408,9 +1670,14 @@
     function render() {
       const bounds = periodBounds(currentPeriod);
       applyMonthlyTheme();
+      document.querySelector(".topbar").classList.toggle("input-mode", currentView === "add");
       if (currentView === "budgetPlan") {
         $("monthTitle").textContent = "予算";
         $("periodLabel").textContent = `${labelMonth(currentPeriod)}の予算メモ`;
+      } else if (currentView === "add") {
+        $("monthTitle").textContent = "支出を入力";
+        $("periodLabel").textContent = `${labelMonth(currentPeriod)}分`;
+        $("entryPeriodHint").textContent = `${bounds.start.getMonth() + 1}/${bounds.start.getDate()}〜${bounds.end.getMonth() + 1}/${bounds.end.getDate()}の支出`;
       } else {
         $("monthTitle").textContent = currentPeriod;
         $("periodLabel").textContent = `${monthlyThemes[Number(currentPeriod.slice(4, 6)) - 1].name} / ${bounds.start.getMonth() + 1}/${bounds.start.getDate()} - ${bounds.end.getMonth() + 1}/${bounds.end.getDate()}`;
@@ -1605,6 +1872,7 @@
       $("suicaInput").checked = preset.type === "suica_use";
       $("plannedInput").checked = preset.planned;
       updateAmountPreview();
+      syncEntryChoiceButtons();
     }
 
     function saveCurrentPreset() {
@@ -1641,8 +1909,12 @@
     function renderBudgetPlans() {
       const rows = budgetPlanRowsForPeriod();
       const total = rows.reduce((sum, item) => sum + item.amount, 0);
+      const confirmedTotal = rows.filter((item) => !item.planned).reduce((sum, item) => sum + item.amount, 0);
+      const plannedTotal = rows.filter((item) => item.planned).reduce((sum, item) => sum + item.amount, 0);
       $("budgetPlanMonthLabel").textContent = `${labelMonth(currentPeriod)}の予算メモ 総合計`;
       $("budgetPlanGrandTotal").textContent = `${yen.format(total)}円`;
+      $("budgetPlanConfirmedTotal").textContent = `確定 ${yen.format(confirmedTotal)}円`;
+      $("budgetPlanPlannedTotal").textContent = `予定 ${yen.format(plannedTotal)}円`;
       const list = $("budgetPlanList");
       list.innerHTML = "";
 
@@ -1664,11 +1936,28 @@
             const row = document.createElement("div");
             row.className = "budget-plan-item";
             row.innerHTML = `
-              <span>${escapeHtml(item.memo || "メモなし")}</span>
-              <strong>${yen.format(item.amount)}円</strong>
+              <div class="budget-plan-main">
+                <span>${escapeHtml(item.memo || "メモなし")}</span>
+                <div class="budget-status-toggle" aria-label="${escapeHtml(item.memo || "予算メモ")}の状態">
+                  <button class="budget-status-btn ${item.planned ? "active" : ""}" type="button" data-status="planned">予定</button>
+                  <button class="budget-status-btn ${item.planned ? "" : "active"}" type="button" data-status="confirmed">確定</button>
+                </div>
+              </div>
+              <button class="budget-amount-edit" type="button" aria-label="金額を変更">
+                <span>${yen.format(item.amount)}円</span>
+                <small>変更</small>
+              </button>
               <button class="mini-delete" type="button" aria-label="削除">×</button>
             `;
-            row.querySelector("button").addEventListener("click", () => {
+            row.querySelectorAll(".budget-status-btn").forEach((button) => {
+              button.addEventListener("click", () => {
+                item.planned = button.dataset.status === "planned";
+                persist();
+                renderBudgetPlans();
+              });
+            });
+            row.querySelector(".budget-amount-edit").addEventListener("click", () => openBudgetPlanEdit(item.id));
+            row.querySelector(".mini-delete").addEventListener("click", () => {
               if (!confirm("この予算メモを削除しますか？")) return;
               state.budgetPlans = state.budgetPlans.filter((saved) => saved.id !== item.id);
               persist();
@@ -1699,6 +1988,7 @@
         memo,
         amount,
         amountExpression: $("budgetPlanAmount").value.trim(),
+        planned: true,
         createdAt: Date.now()
       });
       persist();
@@ -1706,6 +1996,19 @@
       $("budgetPlanAmount").value = "";
       updateBudgetPlanAmountPreview();
       renderBudgetPlans();
+    }
+
+    function openBudgetPlanEdit(id) {
+      const item = state.budgetPlans.find((plan) => plan.id === id);
+      if (!item) return;
+      $("budgetPlanEditId").value = item.id;
+      $("budgetPlanEditAmount").value = item.amountExpression || String(item.amount);
+      updateBudgetPlanEditAmountPreview();
+      $("budgetPlanEditModal").classList.add("open");
+    }
+
+    function closeBudgetPlanEdit() {
+      $("budgetPlanEditModal").classList.remove("open");
     }
 
     function renderMonthTotals() {
@@ -1785,6 +2088,46 @@
       $("categoryInput").innerHTML = categoryOptions;
       $("editCategory").innerHTML = categoryOptions;
       $("presetCategory").innerHTML = categoryOptions;
+      renderEntryChoices();
+    }
+
+    function renderEntryChoices() {
+      $("paymentChoices").innerHTML = payments.map((item) => `
+        <button class="entry-choice" type="button" data-payment-choice="${item.id}">${item.label}</button>
+      `).join("");
+      $("categoryChoices").innerHTML = categories.map((item) => `
+        <button class="entry-choice" type="button" data-category-choice="${item.id}">
+          <span class="choice-icon">${item.icon}</span>
+          <span>${item.label}</span>
+        </button>
+      `).join("");
+
+      document.querySelectorAll("[data-payment-choice]").forEach((button) => {
+        button.addEventListener("click", () => {
+          $("paymentInput").value = button.dataset.paymentChoice;
+          syncEntryChoiceButtons();
+        });
+      });
+      document.querySelectorAll("[data-category-choice]").forEach((button) => {
+        button.addEventListener("click", () => {
+          $("categoryInput").value = button.dataset.categoryChoice;
+          syncEntryChoiceButtons();
+        });
+      });
+      syncEntryChoiceButtons();
+    }
+
+    function syncEntryChoiceButtons() {
+      document.querySelectorAll("[data-payment-choice]").forEach((button) => {
+        const active = button.dataset.paymentChoice === $("paymentInput").value;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", String(active));
+      });
+      document.querySelectorAll("[data-category-choice]").forEach((button) => {
+        const active = button.dataset.categoryChoice === $("categoryInput").value;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", String(active));
+      });
     }
 
     function syncFormDefaults() {
@@ -1794,6 +2137,7 @@
         $("dateInput").value = periodKeyForDate(today) === currentPeriod ? isoDate(today) : isoDate(bounds.start);
       }
       $("paymentInput").value = currentPayment;
+      syncEntryChoiceButtons();
     }
 
     function addEntry(data) {
@@ -1839,13 +2183,66 @@
     }
 
     function exportCsv() {
-      const header = ["period","date","payment","category","memo","amount","amountExpression","type","planned"];
-      const lines = [header.join(",")].concat(state.entries.map((entry) => header.map((key) => csvCell(entry[key])).join(",")));
-      const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
+      const header = ["recordType","id","period","date","payment","category","memo","amount","amountExpression","type","planned","budget","createdAt"];
+      const rows = [];
+      state.entries.forEach((entry) => {
+        rows.push({
+          recordType: "entry",
+          id: entry.id,
+          period: entry.period,
+          date: entry.date,
+          payment: entry.payment,
+          category: entry.category,
+          memo: entry.memo,
+          amount: entry.amount,
+          amountExpression: entry.amountExpression,
+          type: entry.type,
+          planned: entry.planned,
+          createdAt: entry.createdAt
+        });
+      });
+      state.presets.forEach((preset) => {
+        rows.push({
+          recordType: "preset",
+          id: preset.id,
+          payment: preset.payment,
+          category: preset.category,
+          memo: preset.memo,
+          amount: preset.amount,
+          amountExpression: preset.amountExpression,
+          type: preset.type,
+          planned: preset.planned,
+          createdAt: preset.createdAt
+        });
+      });
+      state.budgetPlans.forEach((plan) => {
+        rows.push({
+          recordType: "budgetPlan",
+          id: plan.id,
+          period: plan.period,
+          payment: plan.payment,
+          memo: plan.memo,
+          amount: plan.amount,
+          amountExpression: plan.amountExpression,
+          planned: plan.planned,
+          createdAt: plan.createdAt
+        });
+      });
+      Object.entries(state.budgets).forEach(([key, value]) => {
+        const [period, payment] = key.split(":");
+        rows.push({
+          recordType: "paymentBudget",
+          period,
+          payment,
+          budget: value
+        });
+      });
+      const lines = [header.join(",")].concat(rows.map((row) => header.map((key) => csvCell(row[key])).join(",")));
+      const blob = new Blob([`\uFEFF${lines.join("\n")}`], { type: "text/csv;charset=utf-8" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `kakeibo-${currentPeriod}.csv`;
+      link.download = "kakeibo-backup-all.csv";
       link.click();
       URL.revokeObjectURL(url);
     }
@@ -1890,27 +2287,60 @@
       const reader = new FileReader();
       reader.onload = () => {
         const rows = parseCsv(String(reader.result || ""));
-        const header = rows.shift() || [];
-        const imported = rows.map((row) => Object.fromEntries(header.map((key, index) => [key, row[index]]))).filter((row) => row.date);
+        const header = (rows.shift() || []).map((key) => key.replace(/^\uFEFF/, ""));
+        const imported = rows.map((row) => Object.fromEntries(header.map((key, index) => [key, row[index]])));
+        let count = 0;
         imported.forEach((row) => {
-          const date = new Date(`${row.date}T00:00:00`);
-          state.entries.push({
-            id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
-            period: row.period || periodKeyForDate(date),
-            date: row.date,
-            payment: row.payment || "d",
-            category: row.category || "daily",
-            memo: row.memo || "",
-            amount: parseAmount(row.amount),
-            amountExpression: row.amountExpression || row.amount || "",
-            type: row.type || "normal",
-            planned: row.planned === "true",
-            createdAt: Date.now()
-          });
+          const recordType = row.recordType || "entry";
+          if (recordType === "entry" && row.date) {
+            const date = new Date(`${row.date}T00:00:00`);
+            state.entries.push({
+              id: row.id || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random())),
+              period: row.period || periodKeyForDate(date),
+              date: row.date,
+              payment: row.payment || "d",
+              category: row.category || "daily",
+              memo: row.memo || "",
+              amount: parseAmount(row.amount),
+              amountExpression: row.amountExpression || row.amount || "",
+              type: row.type || "normal",
+              planned: row.planned === "true",
+              createdAt: Number(row.createdAt) || Date.now()
+            });
+            count++;
+          } else if (recordType === "preset" && (row.memo || row.amount)) {
+            state.presets.push({
+              id: row.id || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random())),
+              payment: row.payment || "d",
+              category: row.category || "daily",
+              memo: row.memo || "",
+              amount: parseAmount(row.amount),
+              amountExpression: row.amountExpression || row.amount || "",
+              type: row.type || "normal",
+              planned: row.planned === "true",
+              createdAt: Number(row.createdAt) || Date.now()
+            });
+            count++;
+          } else if (recordType === "budgetPlan" && (row.memo || row.amount)) {
+            state.budgetPlans.push({
+              id: row.id || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random())),
+              period: row.period || currentPeriod,
+              payment: row.payment || "d",
+              memo: row.memo || "",
+              amount: parseAmount(row.amount),
+              amountExpression: row.amountExpression || row.amount || "",
+              planned: row.planned !== "false",
+              createdAt: Number(row.createdAt) || Date.now()
+            });
+            count++;
+          } else if (recordType === "paymentBudget" && row.period && row.payment) {
+            state.budgets[budgetKey(row.period, row.payment)] = parseAmount(row.budget);
+            count++;
+          }
         });
         persist();
         render();
-        alert(`${imported.length}件読み込みました`);
+        alert(`${count}件読み込みました`);
       };
       reader.readAsText(file);
     }
@@ -1965,6 +2395,9 @@
     $("budgetPlanAmount").addEventListener("input", updateBudgetPlanAmountPreview);
     $("budgetPlanAmount").addEventListener("click", () => openCalculator("budgetPlanAmount"));
     $("budgetPlanAmount").addEventListener("focus", () => openCalculator("budgetPlanAmount"));
+    $("budgetPlanEditAmount").addEventListener("input", updateBudgetPlanEditAmountPreview);
+    $("budgetPlanEditAmount").addEventListener("click", () => openCalculator("budgetPlanEditAmount"));
+    $("budgetPlanEditAmount").addEventListener("focus", () => openCalculator("budgetPlanEditAmount"));
 
     document.querySelectorAll("[data-calc]").forEach((button) => {
       button.addEventListener("click", () => pressCalcKey(button.dataset.calc));
@@ -1978,6 +2411,8 @@
     });
 
     $("presetAmount").addEventListener("input", updatePresetAmountPreview);
+    $("presetAmount").addEventListener("click", () => openCalculator("presetAmount"));
+    $("presetAmount").addEventListener("focus", () => openCalculator("presetAmount"));
 
     $("commonPresetForm").addEventListener("submit", (event) => {
       event.preventDefault();
@@ -1987,6 +2422,27 @@
     $("budgetPlanForm").addEventListener("submit", (event) => {
       event.preventDefault();
       addBudgetPlan();
+    });
+
+    $("budgetPlanEditForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const item = state.budgetPlans.find((plan) => plan.id === $("budgetPlanEditId").value);
+      if (!item) return;
+      const amount = parseAmount($("budgetPlanEditAmount").value);
+      if (amount <= 0) {
+        alert("金額を入力してください");
+        return;
+      }
+      item.amount = amount;
+      item.amountExpression = $("budgetPlanEditAmount").value.trim();
+      persist();
+      closeBudgetPlanEdit();
+      renderBudgetPlans();
+    });
+
+    $("closeBudgetPlanEdit").addEventListener("click", closeBudgetPlanEdit);
+    $("budgetPlanEditModal").addEventListener("click", (event) => {
+      if (event.target === $("budgetPlanEditModal")) closeBudgetPlanEdit();
     });
 
     $("entryForm").addEventListener("submit", (event) => {
